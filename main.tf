@@ -4,7 +4,11 @@ terraform {
 
 locals {
   master_instance_name = (
-    var.full_name_master_instance == "" ? format("mysql-%s-%s", var.name_master_instance, var.name_suffix) : var.full_name_master_instance
+    var.full_name_master_instance != ""
+    ?
+    format("%s-%s", var.full_name_master_instance, var.name_suffix)
+    :
+    format("mysql-%s-%s", var.name_master_instance, var.name_suffix)
   )
   read_replica_name_suffix = format("-%s-", var.name_read_replica)
   master_authorized_networks = [
