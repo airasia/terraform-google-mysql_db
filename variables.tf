@@ -286,3 +286,13 @@ variable "maintenance_window" {
     update_track = "stable"
   }
 }
+
+variable "insights_config" {
+  description = "The insights_config settings for the database."
+  type = object({
+    query_string_length     = number
+    record_application_tags = bool
+    record_client_address   = bool
+  })
+  default = null
+}
