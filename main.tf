@@ -43,7 +43,7 @@ resource "google_project_service" "cloudsql_api" {
 
 module "google_mysql_db" {
   source                          = "GoogleCloudPlatform/sql-db/google//modules/mysql"
-  version                         = "9.0.0"
+  version                         = "13.0.1"
   depends_on                      = [google_project_service.compute_api, google_project_service.cloudsql_api]
   deletion_protection             = var.deletion_protection_master_instance
   project_id                      = data.google_client_config.google_client.project
