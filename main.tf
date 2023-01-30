@@ -78,6 +78,7 @@ module "google_mysql_db" {
     ipv4_enabled        = var.public_access_master_instance
     private_network     = var.private_network
     require_ssl         = null
+    allocated_ip_range  = null
   }
 
   # backup settings
