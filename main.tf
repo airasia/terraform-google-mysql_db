@@ -113,7 +113,7 @@ module "google_mysql_db" {
       disk_autoresize     = var.disk_auto_resize_read_replica
       disk_size           = var.disk_size_gb_read_replica
       disk_type           = "PD_SSD"
-      user_labels         = var.labels_read_replica
+      user_labels         = { "name" = var.labels_read_replica }
       encryption_key_name = null
     }
   ]
