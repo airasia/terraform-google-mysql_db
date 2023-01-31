@@ -101,19 +101,19 @@ module "google_mysql_db" {
       tier                  = var.instance_size_read_replica
       zone                  = local.zone_read_replica
       availability_type     = null
+      disk_type             = "PD_SSD"
       disk_autoresize       = true
       disk_autoresize_limit = 0
-      ip_configuration = {
+      disk_size             = var.disk_size_gb_read_replica
+      user_labels           = var.labels_read_replica
+      database_flags        = local.db_flags_read_replica
+      ip_configuration = object({
         authorized_networks = local.read_replica_authorized_networks
         ipv4_enabled        = var.public_access_read_replica
         private_network     = var.private_network
         require_ssl         = null
-      }
-      database_flags      = local.db_flags_read_replica
-      disk_autoresize     = var.disk_auto_resize_read_replica
-      disk_size           = var.disk_size_gb_read_replica
-      disk_type           = "PD_SSD"
-      user_labels         = var.labels_read_replica
+        allocated_ip_range  = null
+      })
       encryption_key_name = null
     }
   ]
