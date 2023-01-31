@@ -102,7 +102,7 @@ module "google_mysql_db" {
       zone                  = local.zone_read_replica
       availability_type     = null
       disk_type             = "PD_SSD"
-      disk_autoresize       = true
+      disk_autoresize       = var.disk_auto_resize_read_replica
       disk_autoresize_limit = 0
       disk_size             = var.disk_size_gb_read_replica
       user_labels           = var.labels_read_replica
