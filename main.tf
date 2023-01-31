@@ -101,7 +101,7 @@ module "google_mysql_db" {
       tier              = var.instance_size_read_replica
       zone              = local.zone_read_replica
       availability_type = null
-      disk_autoresize   = true
+      disk_autoresize   = false
       ip_configuration = {
         authorized_networks = local.read_replica_authorized_networks
         ipv4_enabled        = var.public_access_read_replica
