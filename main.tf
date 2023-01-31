@@ -107,13 +107,13 @@ module "google_mysql_db" {
       disk_size             = var.disk_size_gb_read_replica
       user_labels           = var.labels_read_replica
       database_flags        = local.db_flags_read_replica
-      ip_configuration = object({
+      ip_configuration = {
         authorized_networks = local.read_replica_authorized_networks
         ipv4_enabled        = var.public_access_read_replica
         private_network     = var.private_network
         require_ssl         = null
         allocated_ip_range  = null
-      })
+      }
       encryption_key_name = null
     }
   ]
