@@ -1,5 +1,15 @@
 Terraform module for a MySQL CloudSQL Instance in GCP
 
+# Upgrade guide from v2.4.1 to v3.0.0
+
+This release upgrades the Cloud SQL dependency to `26.2.2`, requires Terraform `>= 1.3.0`, and supports Google and Google Beta providers `>= 7.12.0, < 8.0.0`.
+
+The upstream module now uses `random_password` for generated user passwords. To avoid changing an existing generated password, supply the current password explicitly before upgrading.
+
+The upgrade also enables API-level deletion protection whenever the existing deletion-protection inputs are enabled. Run `terraform plan` and confirm that no Cloud SQL instance or replica replacement is proposed before applying.
+
+For additional users, include `random_password`, `type`, and `host` in each object.
+
 # Upgrade guide from v2.1.0 to v2.1.1
 
 This upgrade requires google provider [v3.44.0](https://github.com/hashicorp/terraform-provider-google/releases/tag/v3.44.0) or above which introduces the `deletion_protection` feature to `google_sql_database_instance` resources. Plan & Apply the google provider version upgrade first **before** upgrading this module version to `v2.1.1`.

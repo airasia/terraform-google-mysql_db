@@ -1,5 +1,15 @@
 terraform {
-  required_version = ">= 0.13.1" # see https://releases.hashicorp.com/terraform/
+  required_version = ">= 1.3.0" # see https://releases.hashicorp.com/terraform/
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = ">= 7.12.0, < 8.0.0"
+    }
+    google-beta = {
+      source  = "hashicorp/google-beta"
+      version = ">= 7.12.0, < 8.0.0"
+    }
+  }
 }
 
 locals {
@@ -43,9 +53,10 @@ resource "google_project_service" "cloudsql_api" {
 
 module "google_mysql_db" {
   source                          = "GoogleCloudPlatform/sql-db/google//modules/mysql"
-  version                         = "13.0.1"
+  version                         = "26.2.2"
   depends_on                      = [google_project_service.compute_api, google_project_service.cloudsql_api]
   deletion_protection             = var.deletion_protection_master_instance
+  deletion_protection_enabled     = var.deletion_protection_master_instance
   project_id                      = data.google_client_config.google_client.project
   name                            = local.master_instance_name
   db_name                         = var.default_db_name
@@ -56,8 +67,10 @@ module "google_mysql_db" {
   zone                            = local.zone_master_instance
   availability_type               = var.highly_available ? "REGIONAL" : null
   tier                            = var.instance_size_master_instance
+  edition                         = var.edition
   disk_size                       = var.disk_size_gb_master_instance
   disk_autoresize                 = var.disk_auto_resize_master_instance
+  disk_autoresize_limit           = var.disk_auto_resize_limit_master_instance
   disk_type                       = "PD_SSD"
   create_timeout                  = var.db_timeout
   update_timeout                  = var.db_timeout
@@ -66,6 +79,8 @@ module "google_mysql_db" {
   user_password                   = var.root_user_password
   user_host                       = var.root_user_host
   database_flags                  = local.db_flags_master_instance
+  connector_enforcement           = var.connector_enforcement
+  iam_users                       = var.iam_users
   user_labels                     = var.labels_master_instance
   additional_users                = var.additional_users
   additional_databases            = var.additional_databases
@@ -74,11 +89,12 @@ module "google_mysql_db" {
   maintenance_window_update_track = var.maintenance_window.update_track
   insights_config                 = var.insights_config
   ip_configuration = {
-    authorized_networks = local.master_authorized_networks
-    ipv4_enabled        = var.public_access_master_instance
-    private_network     = var.private_network
-    require_ssl         = null
-    allocated_ip_range  = var.allocated_ip_range
+    authorized_networks                           = local.master_authorized_networks
+    ipv4_enabled                                  = var.public_access_master_instance
+    private_network                               = var.private_network
+    ssl_mode                                      = null
+    allocated_ip_range                            = var.allocated_ip_range
+    enable_private_path_for_google_cloud_services = false
   }
 
   # backup settings
@@ -93,8 +109,9 @@ module "google_mysql_db" {
   }
 
   # read replica settings
-  read_replica_deletion_protection = var.deletion_protection_read_replica
-  read_replica_name_suffix         = local.read_replica_name_suffix
+  read_replica_deletion_protection         = var.deletion_protection_read_replica
+  read_replica_deletion_protection_enabled = var.deletion_protection_read_replica
+  read_replica_name_suffix                 = local.read_replica_name_suffix
   read_replicas = [
     for array_index in range(var.read_replica_count) : {
       name = array_index
@@ -104,7 +121,7 @@ module "google_mysql_db" {
         authorized_networks = local.read_replica_authorized_networks
         ipv4_enabled        = var.public_access_read_replica
         private_network     = var.private_network
-        require_ssl         = null
+        ssl_mode            = null
         allocated_ip_range  = var.allocated_ip_range_read_replica
       }
       database_flags        = local.db_flags_read_replica
