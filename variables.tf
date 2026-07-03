@@ -86,6 +86,12 @@ variable "instance_size_master_instance" {
   default     = "db-f1-micro"
 }
 
+variable "edition" {
+  description = "The edition of the instance, either ENTERPRISE or ENTERPRISE_PLUS."
+  type        = string
+  default     = null
+}
+
 variable "instance_size_read_replica" {
   description = "The machine type/size of \"ReadReplica\" instances. See https://cloud.google.com/sql/pricing#2nd-gen-pricing."
   type        = string
@@ -108,6 +114,12 @@ variable "disk_auto_resize_master_instance" {
   description = "Whether to increase disk storage size of the master instance automatically. Increased storage size is permanent. Google charges by storage size whether that storage size is utilized or not. Recommended to set to \"true\" for production workloads."
   type        = bool
   default     = false
+}
+
+variable "disk_auto_resize_limit_master_instance" {
+  description = "The maximum size to which storage can be automatically increased for the master instance. Zero means no configured limit."
+  type        = number
+  default     = 0
 }
 
 variable "disk_auto_resize_read_replica" {
@@ -270,6 +282,12 @@ variable "sql_proxy_user_groups" {
   default     = []
 }
 
+variable "connector_enforcement" {
+  description = "Enforce that clients use Cloud SQL connector libraries."
+  type        = bool
+  default     = false
+}
+
 variable "deletion_protection_master_instance" {
   description = "Used to prevent Terraform from deleting the master instance. Must apply with \"false\" first before attempting to delete in the next plan-apply."
   type        = bool
@@ -283,11 +301,22 @@ variable "deletion_protection_read_replica" {
 }
 
 variable "additional_users" {
-  description = "A list of additional users to be created in the CloudSQL instance"
+  description = "A list of additional users to create. Set either password or random_password for each user."
   type = list(object({
-    name     = string
-    password = string
-    host     = string
+    name            = string
+    password        = string
+    random_password = bool
+    host            = string
+    type            = string
+  }))
+  default = []
+}
+
+variable "iam_users" {
+  description = "A list of IAM users to create in the Cloud SQL instance."
+  type = list(object({
+    id    = string
+    email = string
   }))
   default = []
 }
@@ -329,6 +358,7 @@ variable "maintenance_window" {
 variable "insights_config" {
   description = "The insights_config settings for the database."
   type = object({
+    query_plans_per_minute  = optional(number, 5)
     query_string_length     = number
     record_application_tags = bool
     record_client_address   = bool
