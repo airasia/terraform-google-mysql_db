@@ -95,6 +95,8 @@ module "google_mysql_db" {
     ssl_mode                                      = null
     allocated_ip_range                            = var.allocated_ip_range
     enable_private_path_for_google_cloud_services = false
+    psc_enabled                                   = var.psc_enabled
+    psc_allowed_consumer_projects                 = var.psc_allowed_consumer_projects
   }
 
   # backup settings
@@ -118,11 +120,13 @@ module "google_mysql_db" {
       tier = var.instance_size_read_replica
       zone = local.zone_read_replica
       ip_configuration = {
-        authorized_networks = local.read_replica_authorized_networks
-        ipv4_enabled        = var.public_access_read_replica
-        private_network     = var.private_network
-        ssl_mode            = null
-        allocated_ip_range  = var.allocated_ip_range_read_replica
+        authorized_networks           = local.read_replica_authorized_networks
+        ipv4_enabled                  = var.public_access_read_replica
+        private_network               = var.private_network
+        ssl_mode                      = null
+        allocated_ip_range            = var.allocated_ip_range_read_replica
+        psc_enabled                   = var.psc_enabled
+        psc_allowed_consumer_projects = var.psc_allowed_consumer_projects
       }
       database_flags        = local.db_flags_read_replica
       disk_autoresize       = var.disk_auto_resize_read_replica
