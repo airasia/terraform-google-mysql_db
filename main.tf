@@ -92,7 +92,7 @@ module "google_mysql_db" {
     authorized_networks                           = local.master_authorized_networks
     ipv4_enabled                                  = var.public_access_master_instance
     private_network                               = var.private_network
-    ssl_mode                                      = null
+    ssl_mode                                      = var.ssl_mode_master_instance
     allocated_ip_range                            = var.allocated_ip_range
     enable_private_path_for_google_cloud_services = false
     psc_enabled                                   = var.psc_enabled
@@ -123,7 +123,7 @@ module "google_mysql_db" {
         authorized_networks           = local.read_replica_authorized_networks
         ipv4_enabled                  = var.public_access_read_replica
         private_network               = var.private_network
-        ssl_mode                      = null
+        ssl_mode                      = var.ssl_mode_read_replica
         allocated_ip_range            = var.allocated_ip_range_read_replica
         psc_enabled                   = var.psc_enabled
         psc_allowed_consumer_projects = var.psc_allowed_consumer_projects
