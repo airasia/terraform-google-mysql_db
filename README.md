@@ -4,6 +4,15 @@ Terraform module for a MySQL CloudSQL Instance in GCP
 
 This release upgrades the Cloud SQL dependency to `26.2.2`, requires Terraform `>= 1.3.0`, and supports Google and Google Beta providers `>= 7.12.0, < 8.0.0`.
 
+Consumers can now create PSC-enabled MySQL instances with explicit SSL mode:
+
+```terraform
+psc_enabled                   = true
+psc_allowed_consumer_projects = ["move-hotels-stg"]
+ssl_mode_master_instance      = "ENCRYPTED_ONLY"
+ssl_mode_read_replica         = "ENCRYPTED_ONLY"
+```
+
 The upstream module now uses `random_password` for generated user passwords. To avoid changing an existing generated password, supply the current password explicitly before upgrading.
 
 The upgrade also enables API-level deletion protection whenever the existing deletion-protection inputs are enabled. Run `terraform plan` and confirm that no Cloud SQL instance or replica replacement is proposed before applying.

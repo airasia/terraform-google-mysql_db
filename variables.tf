@@ -228,6 +228,19 @@ variable "public_access_master_instance" {
   default     = false
 }
 
+variable "ssl_mode_master_instance" {
+  description = "SSL mode for the MySQL master instance. Use ENCRYPTED_ONLY or TRUSTED_CLIENT_CERTIFICATE_REQUIRED when encrypted client connections are required."
+  type        = string
+  default     = null
+  validation {
+    condition = (
+      var.ssl_mode_master_instance == null ||
+      contains(["ALLOW_UNENCRYPTED_AND_ENCRYPTED", "ENCRYPTED_ONLY", "TRUSTED_CLIENT_CERTIFICATE_REQUIRED"], var.ssl_mode_master_instance)
+    )
+    error_message = "ssl_mode_master_instance must be one of ALLOW_UNENCRYPTED_AND_ENCRYPTED, ENCRYPTED_ONLY, TRUSTED_CLIENT_CERTIFICATE_REQUIRED, or null."
+  }
+}
+
 variable "allocated_ip_range" {
   description = <<-EOT
   The name of the allocated IP range for the private IP of the CloudSQL instance. 
@@ -244,6 +257,19 @@ variable "public_access_read_replica" {
   description = "Whether public IPv4 address should be assigned to the MySQL read-replica instance(s). If set to 'false' then 'var.private_network' must be defined."
   type        = bool
   default     = false
+}
+
+variable "ssl_mode_read_replica" {
+  description = "SSL mode for MySQL read replicas. Use ENCRYPTED_ONLY or TRUSTED_CLIENT_CERTIFICATE_REQUIRED when encrypted client connections are required."
+  type        = string
+  default     = null
+  validation {
+    condition = (
+      var.ssl_mode_read_replica == null ||
+      contains(["ALLOW_UNENCRYPTED_AND_ENCRYPTED", "ENCRYPTED_ONLY", "TRUSTED_CLIENT_CERTIFICATE_REQUIRED"], var.ssl_mode_read_replica)
+    )
+    error_message = "ssl_mode_read_replica must be one of ALLOW_UNENCRYPTED_AND_ENCRYPTED, ENCRYPTED_ONLY, TRUSTED_CLIENT_CERTIFICATE_REQUIRED, or null."
+  }
 }
 
 variable "db_flags_master_instance" {
