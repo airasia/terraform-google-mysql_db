@@ -107,3 +107,8 @@ output "private_ip_address" {
   description = "The first private (PRIVATE) IPv4 address assigned for the master instance"
   value       = module.google_mysql_db.private_ip_address
 }
+
+output "instance_psc_attachment" {
+  description = "The PSC service attachment URI created for the master instance. Use this to create PSC consumer endpoints in other projects."
+  value       = module.google_mysql_db.instance_psc_attachment
+}
