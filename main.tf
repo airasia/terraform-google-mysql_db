@@ -16,7 +16,7 @@ locals {
   master_instance_name = (
     var.full_name_master_instance == "" ? format("mysql-%s-%s", var.name_master_instance, var.name_suffix) : var.full_name_master_instance
   )
-  read_replica_name_suffix = format("-%s-", var.name_read_replica)
+  read_replica_name_suffix = var.enable_read_replica_name_suffix ? format("-%s-", var.name_read_replica) : ""
   master_authorized_networks = [
     for authorized_network in var.authorized_networks_master_instance : {
       name  = authorized_network.display_name
@@ -71,7 +71,7 @@ module "google_mysql_db" {
   disk_size                       = var.disk_size_gb_master_instance
   disk_autoresize                 = var.disk_auto_resize_master_instance
   disk_autoresize_limit           = var.disk_auto_resize_limit_master_instance
-  disk_type                       = "PD_SSD"
+  disk_type                       = var.disk_type_master_instance
   create_timeout                  = var.db_timeout
   update_timeout                  = var.db_timeout
   delete_timeout                  = var.db_timeout
@@ -116,7 +116,7 @@ module "google_mysql_db" {
   read_replica_name_suffix                 = local.read_replica_name_suffix
   read_replicas = [
     for array_index in range(var.read_replica_count) : {
-      name = array_index
+      name = var.enable_read_replica_name_suffix ? array_index : ""
       tier = var.instance_size_read_replica
       zone = local.zone_read_replica
       ip_configuration = {
@@ -132,7 +132,7 @@ module "google_mysql_db" {
       disk_autoresize       = var.disk_auto_resize_read_replica
       disk_autoresize_limit = var.disk_autoresize_limit_read_replica
       disk_size             = var.disk_size_gb_read_replica
-      disk_type             = "PD_SSD"
+      disk_type             = var.disk_type_read_replica
       availability_type     = var.highly_available_read_replica ? "REGIONAL" : "ZONAL"
       user_labels           = var.labels_read_replica
       encryption_key_name   = var.encryption_key_name_read_replica

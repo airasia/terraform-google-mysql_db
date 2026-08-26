@@ -110,6 +110,24 @@ variable "disk_size_gb_read_replica" {
   default     = 10
 }
 
+variable "disk_type_master_instance" {
+  description = "The disk type for the master instance. Options: PD_SSD, PD_HDD, HYPERDISK_BALANCED. Defaults to PD_SSD for backward compatibility."
+  type        = string
+  default     = "PD_SSD"
+}
+
+variable "disk_type_read_replica" {
+  description = "The disk type for the read replica instance(s). Options: PD_SSD, PD_HDD, HYPERDISK_BALANCED. Defaults to PD_SSD for backward compatibility."
+  type        = string
+  default     = "PD_SSD"
+}
+
+variable "enable_read_replica_name_suffix" {
+  description = "When true, the read replica name includes the name_read_replica suffix and index (e.g. '{master}-replica-v2-0'). When false, the replica is named '{master}-replica' with no suffix or index. Set to false when read_replica_count = 1 and the replica was created with a simplified name (e.g. via GCP DMS)."
+  type        = bool
+  default     = true
+}
+
 variable "disk_auto_resize_master_instance" {
   description = "Whether to increase disk storage size of the master instance automatically. Increased storage size is permanent. Google charges by storage size whether that storage size is utilized or not. Recommended to set to \"true\" for production workloads."
   type        = bool
