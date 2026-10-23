@@ -48,7 +48,7 @@ These incremental upgrades through `1.3.x` -> `1.4.1` -> `1.4.2` -> `1.4.3` will
 
 ### Upgrading to v1.4.1
 * Upgrade `mysql_db` module version to `1.4.1`
-* Remove all references of Failover replica from your Terrform configuration
+* Remove all references of Failover replica from your Terraform configuration
 * Run `terraform plan`
    * the plan will show that it will remove the failover instance from your CloudSQL
 * Run `terraform apply`
@@ -69,7 +69,7 @@ These incremental upgrades through `1.3.x` -> `1.4.1` -> `1.4.2` -> `1.4.3` will
 * Upgrade `mysql_db` module version to `1.4.3`
 * Run `terraform plan`
    * the plan will show that your ReadReplica instance will be replaced - we want to avoid any kind of replacement
-   * notice that the plan says an **existing** resource (let's say `resourceX`) will be destroyed and a **new** reource (let's say `resourceY`) will be created
+   * notice that the plan says an **existing** resource (let's say `resourceX`) will be destroyed and a **new** resource (let's say `resourceY`) will be created
    * notice the array index names
       * `resourceX` has array index `[0]` - although it may not show `[0]`
       * `resourceY` will have array index with the new resource name
