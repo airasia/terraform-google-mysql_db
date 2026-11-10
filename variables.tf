@@ -87,9 +87,13 @@ variable "instance_size_master_instance" {
 }
 
 variable "edition" {
-  description = "The edition of the instance, either ENTERPRISE or ENTERPRISE_PLUS."
+  description = "Cloud SQL edition: ENTERPRISE or ENTERPRISE_PLUS. If null, ENTERPRISE is used for any tier other than db-perf-optimized-*, and GCP's default applies otherwise."
   type        = string
   default     = null
+  validation {
+    condition     = var.edition == null ? true : contains(["ENTERPRISE", "ENTERPRISE_PLUS"], var.edition)
+    error_message = "edition must be null, ENTERPRISE or ENTERPRISE_PLUS."
+  }
 }
 
 variable "instance_size_read_replica" {

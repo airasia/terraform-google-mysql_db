@@ -37,6 +37,14 @@ locals {
   db_flags_master_instance = [for key, val in var.db_flags_master_instance : { name = key, value = val }]
   db_flags_read_replica    = [for key, val in var.db_flags_read_replica : { name = key, value = val }]
   backup_location          = var.backup_enabled ? coalesce(var.backup_location, local.region_master_instance) : null
+  edition_master_instance = (
+    var.edition != null ? var.edition : (
+      startswith(var.instance_size_master_instance, "db-perf-optimized-") ? null : "ENTERPRISE"
+  ))
+  edition_read_replica = (
+    var.edition != null ? var.edition : (
+      startswith(var.instance_size_read_replica, "db-perf-optimized-") ? null : "ENTERPRISE"
+  ))
 }
 
 data "google_client_config" "google_client" {}
@@ -67,7 +75,7 @@ module "google_mysql_db" {
   zone                            = local.zone_master_instance
   availability_type               = var.highly_available ? "REGIONAL" : null
   tier                            = var.instance_size_master_instance
-  edition                         = var.edition
+  edition                         = local.edition_master_instance
   disk_size                       = var.disk_size_gb_master_instance
   disk_autoresize                 = var.disk_auto_resize_master_instance
   disk_autoresize_limit           = var.disk_auto_resize_limit_master_instance
@@ -116,9 +124,10 @@ module "google_mysql_db" {
   read_replica_name_suffix                 = local.read_replica_name_suffix
   read_replicas = [
     for array_index in range(var.read_replica_count) : {
-      name = var.enable_read_replica_name_suffix ? array_index : ""
-      tier = var.instance_size_read_replica
-      zone = local.zone_read_replica
+      name    = var.enable_read_replica_name_suffix ? array_index : ""
+      tier    = var.instance_size_read_replica
+      edition = local.edition_read_replica
+      zone    = local.zone_read_replica
       ip_configuration = {
         authorized_networks           = local.read_replica_authorized_networks
         ipv4_enabled                  = var.public_access_read_replica
